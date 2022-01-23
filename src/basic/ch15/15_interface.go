@@ -77,6 +77,8 @@ func main() {
 	// k := a.(string) // a는 string타입이 아니므로 런타임에러발생
 	// print(k)
 	// thisValueAndType(k)
+	k, ok := a.(string) // flag값을 받으면 panic없이 핸들링가능
+	fmt.Println(k, ok)
 }
 
 // Rect struct 정의
