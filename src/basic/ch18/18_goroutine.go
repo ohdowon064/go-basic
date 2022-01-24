@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -77,6 +78,46 @@ func main() {
 	// https://stackoverflow.com/questions/53388154/is-the-main-function-runs-as-a-goroutine
 
 	/*
-		위 예제에서는 sync.WaitGroup을 사용한다.
+		- 위 예제에서는 sync.WaitGroup을 사용한다.
+			- 기본적으로 여러 고루틴들이 끝날 때까지 기다리는 역할을 한다.
+		- WaitGroupt을 사용하기 위해서는 먼저 Add() 메서드로 몇개의 고루틴을 기다릴 것인지 지정해야한다.
+		- 또한, 각 고루틴은 Done() 메서드를 호출해야한다. -> 여기서는 defer를 사용
+		- 메인루틴에서 Wait()메서드를 호출하여 고루틴들이 끝나는 것을 기다린다.
 	*/
+
+	/*
+		3. 다중 CPU(코어) 처리
+		- 고는 디폴트로 1개의 CPU를 사용한다.
+			- 즉, 여러개의 고루틴을 만들어도, 1개의 CPU에서 작업을 시분할하여 처리한다.
+				-> Concurrent 처리
+		- 머신이 복수개의 CPU를 가진 경우, 고프로그램을 다중코어에서 병렬처리(Parallel처리) 할 수 있다.
+		- 병렬처리는 다음과 같이 runtime.GOMAXPROCS 함수를 호출해야한다.
+			- GOMAXPROCS: CPU 수
+			- 여기서 CPU 수는 Logical CPU 수를 가리킨다.
+	*/
+
+	// 4개의 CPU 사용
+	// runtime.GOMAXPROCS(4)
+
+	/*
+		Concurrency vs Parallelism
+		- concurrency is the composition of independently executing processes
+		- parallelism is the simultaneous execution of (possibly related) computations.
+		- Concurrency is about dealing with lots of things at once.
+		- Parallelism is about doing lots of things at once.
+	*/
+
+	runtime.GOMAXPROCS(runtime.NumCPU()) // CPU 개수 구한 뒤, 사용할 최대 CPU 개수설정
+
+	fmt.Println(runtime.GOMAXPROCS(0)) // 설정 값 출력
+
+	s := "Hello, World!"
+
+	for i := 0; i < 100; i++ {
+		go func(n int) { // 익명함수를 고루틴으로 실행
+			fmt.Println(s, n)
+		}(i)
+	}
+
+	fmt.Scanln()
 }
