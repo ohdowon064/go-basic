@@ -92,23 +92,46 @@ func main() {
     bufferedCh <- 101
     fmt.Println(<-bufferedCh)
 
+    
+    /*
+        3. 채널 파라미터
+        - 채널을 함수의 파라미터로 전달할 때 일반적으로 송수신을 모두 하는 채널을 전달
+        - 하지만 특별히 송신전용, 수신전용 채널을 지정할 수 있다.
+        - 송신 파라미터: p chan<- int
+        - 수신 파라미터: p <-chan int
+        - 송신 전용에 수신 또는 반대 상황인 경우 에러가 발생한다.
+    */
 
-//     done1 := make(chan bool)
-//     done2 := make(chan bool)
+    chanParamExam := make(chan string, 1)
+    sendChan(chanParamExam)
+    receiveChan(chanParamExam)
+    
+    done1 := make(chan bool)
+    done2 := make(chan bool)
 
-//     go run1(done1)
-//     go run2(done2)
+    go run1(done1)
+    go run2(done2)
 
-// EXIT:
-//     for {
-//         select {
-//         case <-done1:
-//             println("run1 완료")
-//         case <-done2:
-//             println("run2 완료")
-//             break EXIT
-//         }
-//     }
+EXIT:
+    for {
+        select {
+        case <-done1:
+            println("run1 완료")
+        case <-done2:
+            println("run2 완료")
+            break EXIT
+        }
+    }
+}
+
+func sendChan(ch chan<- string) {
+    ch <- "Data"
+    // x := <-ch // 에러발생, 송신파라미터를 수신으로 사용
+}
+
+func receiveChan(ch <-chan string) {
+    data := <-ch
+    fmt.Println(data)
 }
 
 func run1(done chan bool) {
