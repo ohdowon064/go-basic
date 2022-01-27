@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
     /*
@@ -32,8 +35,19 @@ func main() {
     // time.Sleep(), fmt.Scanf()가 없어도 고루틴이 끝날 때까지 대기한다.
 
     /*
-    
+        - 이렇게 고채널은 송신자, 수신자가 서로를 기다리는 속성이 있다.
+        - 이를 이용하여 고루틴이 끝날때까지 기다리는 기능을 구현할 수 있다.
     */
+
+    done := make(chan bool)
+    go func() {
+        for i := 0; i < 10; i++ {
+            fmt.Println(i)
+        }
+        done <- true
+    }()
+    
+
     done1 := make(chan bool)
     done2 := make(chan bool)
 
