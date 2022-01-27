@@ -105,6 +105,36 @@ func main() {
     chanParamExam := make(chan string, 1)
     sendChan(chanParamExam)
     receiveChan(chanParamExam)
+
+    /*
+        4. 채널 닫기
+        - 채널을 오픈한 뒤, 데이터 송신 후, close()함수를 사용해서 채널을 닫을 수 있다.
+        - 채널을 닫으면 해당 채널로 송신 불가
+        - 하지만 채널 닫아도 계속 수신은 가능하다.
+        - 채널 수신에 사용되는 <-ch는 2개의 리턴값을 갖는다.
+            - 첫째, 채널 메시지
+            - 둘째, 수신 성공 여부 
+                - 채널이 닫혔다면 두번째 리턴값은 false를 리턴한다.
+    */
+
+    chanCloseExam := make(chan int, 2)
+
+    // 채널에 송신
+    chanCloseExam <- 1
+    chanCloseExam <- 2
+
+    // 채널을 닫는다.
+    close(chanCloseExam)
+
+    // 채널을 닫으면 송신은 안돼도, 수신은 된다.
+    println(<-chanCloseExam)
+    println(<-chanCloseExam)
+
+    if _, success := <-chanCloseExam; !success {
+        println("더이상 데이터 없음!!")
+    }
+
+
     
     done1 := make(chan bool)
     done2 := make(chan bool)
