@@ -124,7 +124,7 @@ func main() {
     chanCloseExam <- 2
 
     // 채널을 닫는다.
-    // close(chanCloseExam)
+    close(chanCloseExam)
 
     // 채널을 닫으면 송신은 안돼도, 수신은 된다.
     // println(<-chanCloseExam)
