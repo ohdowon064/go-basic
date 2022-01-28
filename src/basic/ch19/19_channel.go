@@ -183,21 +183,38 @@ func main() {
         println(i)
     }
 
+    /*
+        6. 채널 select 문
+        - select는 복수 채널을 기다리면서 준비된(데이터를 보낸) 채널을 실행하는 기능을 제공한다.
+        - 즉, select는 여러개의 case문에서 각각 다른 채널을 기다린다.
+            - 준비가 된 채널 case를 실행한다.
+        - select는 case 채널들이 준비되지 않으면 계속 대기한다.
+        - 가장 먼저 도착한 채널의 case를 실행한다.
+        - 복수 채널에 신호가 오면 go runtime이 랜덤으로 한개를 선택한다.
+            - 하지만, default문이 있으면 case문 채널이 준비되지 않더라도
+            - 계속 대기하지 않고 바로 default문을 실행한다.
+    */
+
     
+    // 2개의 채널
     done1 := make(chan bool)
     done2 := make(chan bool)
 
-    go run1(done1)
-    go run2(done2)
+    // 2개의 고루틴 실행
+    go run1(done1) // 3초 대기
+    go run2(done2) // 2초 대기
 
 EXIT:
     for {
         select {
         case <-done1:
             println("run1 완료")
+            break EXIT // "break label"은 C/C#의 goto와 달리 해당 레이블로 이동 후
+            // 자신이 빠져나온 루프 다음 문장을 실행한다.
+            // 따라서 여기서는 루프 다음 즉 main() 함수 끝에 다다른다.
         case <-done2:
             println("run2 완료")
-            break EXIT
+            
         }
     }
 }
