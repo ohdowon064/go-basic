@@ -140,6 +140,48 @@ func main() {
         println("더이상 데이터 없음!!")
     }
 
+    /*
+        5. 채널 range문
+        - 채널에서 송신자가 송신을 한후 채널을 닫을 수 있다.
+        - 수신자는 임의의 개수의 데이터를 채널이 닫힐 때까지 계속 수신가능
+        
+        1) 무한 for 루프안에서 if문으로 수신 채널의 두번째 파라미터(성공플래그)를 체크
+        2) for range로 간결하게 표현 가능 -> 채널 닫힌것을 감지하면 for루프 종료
+    */
+
+    // 방법1: 무한 for loop
+    forChan1 := make(chan int, 2) // Buffered Channel
+
+    // 채널에 송신
+    forChan1 <- 1
+    forChan1 <- 2
+
+    // 채널 종료
+    close(forChan1)
+
+
+
+    for {
+        if i, success := <-forChan1; success {
+            println(i)
+        } else {
+            break
+        }
+    }
+
+    // 방법2: for range
+    forChan2 := make(chan int, 2)
+
+    // 채널에 송신
+    forChan2 <- 1
+    forChan2 <- 2
+
+    // 채널 종료
+    close(forChan2)
+
+    for i := range forChan2 { // 데이터가 없으면 자동으로 for루프 종료
+        println(i)
+    }
 
     
     done1 := make(chan bool)
